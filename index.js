@@ -1,0 +1,21 @@
+import express from "express";
+import bodyParser from "body-parser";
+import routes from "./routes/routes.js";
+import cors from "cors";
+
+const app = express();
+
+app.use(cors());
+
+app.use(bodyParser.json());
+app.use("/api", routes);
+
+app.get("/", function (req, res) {
+    return res.status(200).json({message: "Bienvenido a la API REST de Docentes"});
+});
+
+const PORT = 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
