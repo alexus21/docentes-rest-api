@@ -1,4 +1,5 @@
 import Users from "../models/UsersModel.js";
+import {hashPassword} from "../moduls/password-cryptor.js";
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -32,5 +33,14 @@ export const verifyUser = async (req, res) => {
         }
     } catch (err) {
         return res.status(500).json({ error: err.message });
+    }
+};
+
+export const initUsers = async (req, res) => {
+    try {
+        const init = await Users.init();
+        res.json(init);
+    } catch (err) {
+        res.status(500).send(err);
     }
 };
