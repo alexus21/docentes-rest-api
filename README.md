@@ -16,4 +16,4 @@ npm run dev
 
 ## 3. Initialize database:
     
-Open your browser, and go to: `http://localhost:4000/api/init`
+Open your browser, and go to: `http://localhost:3000/api/init`

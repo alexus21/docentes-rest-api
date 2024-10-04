@@ -22,8 +22,19 @@ const Users = {
             );
             return result.rows[0];
         } catch (error) {
-            console.error('Error querying user:', error); // Log the error
+            console.error('Error querying user:', error);
             throw error;
+        }
+    },
+    changeStatus: async (id) => {
+        try{
+            const result = await db.query(
+                "UPDATE users SET enabled = true WHERE id = $1", [id]
+            );
+            return result.rows[0];
+        }catch (err){
+            console.error('Error updating user status:', err);
+            throw err;
         }
     },
     initDepartmentsTable: async function() {

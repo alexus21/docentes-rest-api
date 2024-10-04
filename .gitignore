@@ -1,4 +1,7 @@
+#Files:
 .env
-node_modules
 users.json
+
+#Dirs:
+node_modules
 .idea
