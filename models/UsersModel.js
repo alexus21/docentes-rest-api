@@ -29,7 +29,9 @@ const Users = {
     initDepartmentsTable: async function() {
         return await db.query(
             `
-                create table if not exists departments
+                drop table if exists departments cascade;
+                
+                create table departments
                 (
                     id              serial not null
                         constraint departments_pk primary key,
@@ -43,7 +45,9 @@ const Users = {
     initCareersTable: async function() {
         return await db.query(
             `
-                create table if not exists careers
+                drop table if exists careers cascade;
+
+                create table careers
                 (
                     id            serial not null
                         constraint careers_pk primary key,
@@ -61,7 +65,9 @@ const Users = {
     initUsersTable: async function() {
         return await db.query(
             `
-                create table if not exists users
+                drop table if exists users cascade;
+
+                create table users
                 (
                     id         serial not null
                         constraint users_pk primary key,
