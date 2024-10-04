@@ -1,0 +1,40 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "full_name": "Josselin Vanessa Márquez Argueta",
+            "email": "josselin.marquez@ues.edu.sv",
+            "password": "josselin.marquez.$2a$10#"
+        },
+        {
+            "id": 2,
+            "full_name": "César Misael Rodríguez Franco",
+            "email": "cesar.rodriguez@ues.edu.sv",
+            "password": "cesar.rodriguez.$2a$10#"
+        },
+        {
+            "id": 3,
+            "full_name": "Héctor Javier Paiz Ramos",
+            "email": "hectos.paiz@ues.edu.sv",
+            "password": "hector.paiz.$2a$10#"
+        },
+        {
+            "id": 4,
+            "full_name": "José Alexander Guandique Flores",
+            "email": "jose.guandique@ues.edu.sv",
+            "password": "jose.guandique.$2a$10#"
+        },
+        {
+            "id": 5,
+            "full_name": "Ligia Astrid Hernández Bonilla",
+            "email": "ligia.hernandez@ues.edu.sv",
+            "password": "ligia.hernandez.$2a$10#"
+        },
+        {
+            "id": 6,
+            "full_name": "Diego Armando Herrera Flores",
+            "email": "diego.herrera@ues.edu.sv",
+            "password": "diego.herrera.$2a$10#"
+        }
+    ]
+}
