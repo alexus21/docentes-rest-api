@@ -21,7 +21,24 @@ const Users = {
         );
         return result.rows[0];
     },
-    init: async () => {
+    initTable: async () => {
+        return await db.query(
+            `
+                create table users
+                (
+                    id         serial not null
+                        constraint users_pk primary key,
+                    full_name  varchar(50),
+                    email      varchar(50),
+                    password   varchar(200),
+                    activated  boolean   default false,
+                    created_at timestamp default now(),
+                    updated_at timestamp default now()
+                );
+            `
+        );
+    },
+    initUsers: async () => {
         const users = fs.readFileSync("./users.json", "utf-8");
         const parsedUsers = JSON.parse(users).users;
         const results = [];

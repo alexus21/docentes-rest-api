@@ -1,5 +1,4 @@
 import Users from "../models/UsersModel.js";
-import {hashPassword} from "../moduls/password-cryptor.js";
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -36,9 +35,18 @@ export const verifyUser = async (req, res) => {
     }
 };
 
+export const initTable = async (req, res) => {
+    try {
+        const init = await Users.initTable();
+        res.json(init);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+};
+
 export const initUsers = async (req, res) => {
     try {
-        const init = await Users.init();
+        const init = await Users.initUsers();
         res.json(init);
     } catch (err) {
         res.status(500).send(err);
