@@ -5,7 +5,7 @@ const router = Router();
 
 router.get("/users", getAllUsers);
 router.get("/users/:id", getUserById);
-router.get("/users/verifyUser", verifyUser);
+router.get("/verifyUser", verifyUser);
 router.get("/init", init);
 
 export default router;

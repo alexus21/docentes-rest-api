@@ -15,11 +15,16 @@ const Users = {
         const result = await db.query("SELECT full_name, email FROM users WHERE id = $1", [intId]);
         return result.rows[0];
     },
-    verifyUser: async (email) => {
-        const result = await db.query("SELECT full_name, email, password FROM users WHERE email = ?",
-            [email]
-        );
-        return result.rows[0];
+    verifyUser: async (user) => {
+        try {
+            const result = await db.query(
+                "SELECT * FROM users WHERE email = $1", [user]
+            );
+            return result.rows[0];
+        } catch (error) {
+            console.error('Error querying user:', error); // Log the error
+            throw error;
+        }
     },
     initDepartmentsTable: async function() {
         return await db.query(
