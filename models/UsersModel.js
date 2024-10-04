@@ -126,6 +126,10 @@ const Users = {
         await this.initDepartments();
         await this.initCareers();
         await this.initUsers();
+    },
+    init: async function() {
+        await this.initTables();
+        await this.initData();
     }
 };
 
