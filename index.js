@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use("/api", routes);
 
 app.get("/", function (req, res) {
-    return res.status(200).json({message: "Bienvenido a la API REST de Docentes"});
+    return res.send("Bienvenido a la API REST de Docentes");
 });
 
 const PORT = 3000;

@@ -17,3 +17,20 @@ export const getUserById = async (req, res) => {
         res.status(500).send(err);
     }
 };
+
+export const verifyUser = async (req, res) => {
+    const { email } = req.query;
+    if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+    }
+    try {
+        const result = await Users.verifyUser({ email });
+        if (result) {
+            return res.status(200).json(result);
+        } else {
+            return res.status(404).json({ error: "User not found" });
+        }
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
