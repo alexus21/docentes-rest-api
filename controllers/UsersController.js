@@ -35,18 +35,18 @@ export const verifyUser = async (req, res) => {
     }
 };
 
-export const initTable = async (req, res) => {
+export const initTables = async (req, res) => {
     try {
-        const init = await Users.initTable();
+        const init = await Users.initTables();
         res.json(init);
     } catch (err) {
         res.status(500).send(err);
     }
 };
 
-export const initUsers = async (req, res) => {
+export const initData = async (req, res) => {
     try {
-        const init = await Users.initUsers();
+        const init = await Users.initData();
         res.json(init);
     } catch (err) {
         res.status(500).send(err);

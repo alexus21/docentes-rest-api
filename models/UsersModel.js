@@ -21,37 +21,111 @@ const Users = {
         );
         return result.rows[0];
     },
-    initTable: async () => {
+    initDepartmentsTable: async function() {
         return await db.query(
             `
-                create table users
+                create table if not exists departments
+                (
+                    id              serial not null
+                        constraint departments_pk primary key,
+                    department_name varchar(50),
+                    created_at      timestamp default now(),
+                    updated_at      timestamp default now()
+                );
+            `
+        );
+    },
+    initCareersTable: async function() {
+        return await db.query(
+            `
+                create table if not exists careers
+                (
+                    id            serial not null
+                        constraint careers_pk primary key,
+                    career_name   varchar(100),
+                    department_id int
+                        constraint careers_department_id_foreign
+                            references departments(id)
+                                on update cascade on delete cascade,
+                    created_at    timestamp default now(),
+                    updated_at    timestamp default now()
+                );
+            `
+        );
+    },
+    initUsersTable: async function() {
+        return await db.query(
+            `
+                create table if not exists users
                 (
                     id         serial not null
                         constraint users_pk primary key,
                     full_name  varchar(50),
                     email      varchar(50),
                     password   varchar(200),
-                    activated  boolean   default false,
+                    career_id  int
+                        constraint users_career_id_foreign
+                            references careers(id)
+                                on update cascade on delete cascade,
+                    enabled    boolean   default false,
                     created_at timestamp default now(),
                     updated_at timestamp default now()
                 );
             `
         );
     },
-    initUsers: async () => {
-        const users = fs.readFileSync("./users.json", "utf-8");
-        const parsedUsers = JSON.parse(users).users;
+    initTables: async function() {
+        await this.initDepartmentsTable();
+        await this.initCareersTable();
+        await this.initUsersTable();
+    },
+    initDepartments: async function() {
+        const departments = fs.readFileSync('./departments.json', 'utf-8');
+        const parsedDepartments = JSON.parse(departments).departments;
         const results = [];
 
-        for (const user of parsedUsers) {
-            const hashedPassword = await hashPassword(user.password);
-            const result = await db.query("INSERT INTO users (id, full_name, email, password) VALUES ($1, $2, $3, $4)",
-                [user.id, user.full_name, user.email, hashedPassword]
+        for (const department of parsedDepartments) {
+            const result = await db.query("INSERT INTO departments (id, department_name) VALUES ($1, $2)",
+                [department.id, department.department_name]
             );
             results.push(result);
         }
 
         return results;
+    },
+    initCareers: async function() {
+        const careers = fs.readFileSync('./careers.json', 'utf-8');
+        const parsedCareers = JSON.parse(careers).careers;
+        const results = [];
+
+        for (const career of parsedCareers) {
+            const result = await db.query("INSERT INTO careers (id, career_name, department_id) VALUES ($1, $2, $3)",
+                [career.id, career.career_name, career.department_id]
+            );
+            results.push(result);
+        }
+
+        return results;
+    },
+    initUsers: async function() {
+        const users = fs.readFileSync('./users.json', 'utf-8');
+        const parsedUsers = JSON.parse(users).users;
+        const results = [];
+
+        for (const user of parsedUsers) {
+            const hashedPassword = await hashPassword(user.password);
+            const result = await db.query("INSERT INTO users (id, full_name, email, password, career_id) VALUES ($1, $2, $3, $4, $5)",
+                [user.id, user.full_name, user.email, hashedPassword, user.career_id]
+            );
+            results.push(result);
+        }
+
+        return results;
+    },
+    initData: async function() {
+        await this.initDepartments();
+        await this.initCareers();
+        await this.initUsers();
     }
 };
 
