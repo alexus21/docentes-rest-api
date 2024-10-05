@@ -7,6 +7,6 @@ router.get("/users", getAllUsers);
 router.get("/users/:id", getUserById);
 router.get("/verifyUser", verifyUser);
 router.put("/users/:id", changeStatus);
-router.get("/init", init);
+router.post("/init", init);
 
 export default router;
