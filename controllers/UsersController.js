@@ -13,7 +13,10 @@ export const getAllUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
     try {
         const user = await Users.getById(req.params.id);
-        res.json(user);
+        res.json({
+            success: true,
+            data: user
+        });
     } catch (err) {
         res.status(500).send(err);
     }
@@ -36,6 +39,14 @@ export const verifyUser = async (req, res) => {
             return res.status(404).json({error: "Usuario no encontrado"});
         }
 
+        if (user.enabled) {
+            return res.status(401).json({
+                "message": "Este usuario ya ha sido activado",
+                "success": false,
+                "enabled": true
+            });
+        }
+
         const isPasswordValid = bcrypt.compareSync(req.query.password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({
@@ -43,22 +54,28 @@ export const verifyUser = async (req, res) => {
                 "success": false
             });
         }
-        if (user.enabled) {
-            return res.status(401).json({
-                "message": "Este usuario ya ha sido activado",
-                "success": false
-            });
-        }
-        await Users.changeStatus(user.id);
         return res.status(200).json({
             "message": "User enabled",
             "success": true,
-            "user": user
+            "user": await Users.getById(user.id)
         });
     } catch (err) {
         return res.status(500).json({error: err.message});
     }
 };
+
+export const changeStatus = async (req, res) => {
+    try {
+        const user = await Users.changeStatus(req.params.id);
+        res.json({
+            success: true,
+            data: user,
+            message: "Contraseña actualizada correctamente"
+        });
+    } catch (err) {
+        res.status
+    }
+}
 
 export const init = async (req, res) => {
     try {

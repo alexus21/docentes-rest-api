@@ -4,7 +4,20 @@ import {hashPassword} from "../moduls/password-cryptor.js";
 
 const Users = {
     getAll: async () => {
-        const result = await db.query("SELECT id, full_name, email FROM users");
+        const result = await db.query(
+            `SELECT users.id,
+                    users.name,
+                    users.email,
+                    users.career_id,
+                    careers.career_name,
+                    careers.department_id,
+                    departments.department_name
+             FROM users
+                      INNER JOIN
+                  careers ON users.career_id = careers.id
+                      INNER JOIN
+                  departments ON careers.department_id = departments.id`
+        );
         return result.rows;
     },
     getById: async id => {
@@ -12,7 +25,20 @@ const Users = {
         if (isNaN(intId)) {
             throw new Error("Invalid ID format");
         }
-        const result = await db.query("SELECT full_name, email FROM users WHERE id = $1", [intId]);
+        const result = await db.query(
+            `SELECT users.id,
+                    users.name,
+                    users.email,
+                    users.career_id,
+                    careers.career_name,
+                    careers.department_id,
+                    departments.department_name
+             FROM users
+                      INNER JOIN
+                  careers ON users.career_id = careers.id
+                      INNER JOIN
+                  departments ON careers.department_id = departments.id
+             WHERE users.id = $1`, [intId]);
         return result.rows[0];
     },
     verifyUser: async (user) => {
@@ -27,21 +53,21 @@ const Users = {
         }
     },
     changeStatus: async (id) => {
-        try{
+        try {
             const result = await db.query(
                 "UPDATE users SET enabled = true WHERE id = $1", [id]
             );
             return result.rows[0];
-        }catch (err){
+        } catch (err) {
             console.error('Error updating user status:', err);
             throw err;
         }
     },
-    initDepartmentsTable: async function() {
+    initDepartmentsTable: async function () {
         return await db.query(
             `
                 drop table if exists departments cascade;
-                
+
                 create table departments
                 (
                     id              serial not null
@@ -53,7 +79,7 @@ const Users = {
             `
         );
     },
-    initCareersTable: async function() {
+    initCareersTable: async function () {
         return await db.query(
             `
                 drop table if exists careers cascade;
@@ -65,15 +91,15 @@ const Users = {
                     career_name   varchar(100),
                     department_id int
                         constraint careers_department_id_foreign
-                            references departments(id)
-                                on update cascade on delete cascade,
+                            references departments (id)
+                            on update cascade on delete cascade,
                     created_at    timestamp default now(),
                     updated_at    timestamp default now()
                 );
             `
         );
     },
-    initUsersTable: async function() {
+    initUsersTable: async function () {
         return await db.query(
             `
                 drop table if exists users cascade;
@@ -82,13 +108,13 @@ const Users = {
                 (
                     id         serial not null
                         constraint users_pk primary key,
-                    full_name  varchar(50),
+                    name       varchar(50),
                     email      varchar(50),
                     password   varchar(200),
                     career_id  int
                         constraint users_career_id_foreign
-                            references careers(id)
-                                on update cascade on delete cascade,
+                            references careers (id)
+                            on update cascade on delete cascade,
                     enabled    boolean   default false,
                     created_at timestamp default now(),
                     updated_at timestamp default now()
@@ -96,12 +122,12 @@ const Users = {
             `
         );
     },
-    initTables: async function() {
+    initTables: async function () {
         await this.initDepartmentsTable();
         await this.initCareersTable();
         await this.initUsersTable();
     },
-    initDepartments: async function() {
+    initDepartments: async function () {
         const departments = fs.readFileSync('./departments.json', 'utf-8');
         const parsedDepartments = JSON.parse(departments).departments;
         const results = [];
@@ -115,7 +141,7 @@ const Users = {
 
         return results;
     },
-    initCareers: async function() {
+    initCareers: async function () {
         const careers = fs.readFileSync('./careers.json', 'utf-8');
         const parsedCareers = JSON.parse(careers).careers;
         const results = [];
@@ -129,27 +155,27 @@ const Users = {
 
         return results;
     },
-    initUsers: async function() {
+    initUsers: async function () {
         const users = fs.readFileSync('./users.json', 'utf-8');
         const parsedUsers = JSON.parse(users).users;
         const results = [];
 
         for (const user of parsedUsers) {
             const hashedPassword = await hashPassword(user.password);
-            const result = await db.query("INSERT INTO users (id, full_name, email, password, career_id) VALUES ($1, $2, $3, $4, $5)",
-                [user.id, user.full_name, user.email, hashedPassword, user.career_id]
+            const result = await db.query("INSERT INTO users (id, name, email, password, career_id) VALUES ($1, $2, $3, $4, $5)",
+                [user.id, user.name, user.email, hashedPassword, user.career_id]
             );
             results.push(result);
         }
 
         return results;
     },
-    initData: async function() {
+    initData: async function () {
         await this.initDepartments();
         await this.initCareers();
         await this.initUsers();
     },
-    init: async function() {
+    init: async function () {
         await this.initTables();
         await this.initData();
     }
