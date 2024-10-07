@@ -1,5 +1,6 @@
 import Users from "../models/UsersModel.js";
 import bcrypt from "bcryptjs";
+import fs from "fs";
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -19,6 +20,30 @@ export const getUserById = async (req, res) => {
         });
     } catch (err) {
         res.status(500).send(err);
+    }
+};
+
+export const getUserByMail = async (req, res) => {
+    try {
+        const email = req.query.email; // Asegurarse de que es email lo que se consulta
+        const user = await Users.getByEmail(email);
+
+        if (!user) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        const users = fs.readFileSync('./users.json', 'utf-8');
+        const parsedUsers = JSON.parse(users).users;
+        const userPassword = parsedUsers.find(user => user.email === email).password;
+
+        res.json({
+            success: true,
+            email: email,
+            password: userPassword
+        });
+    } catch (err) {
+        console.error('Error al obtener usuario por email:', err.message);
+        res.status(500).json({ error: 'Error interno del servidor', details: err.message });
     }
 };
 

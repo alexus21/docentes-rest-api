@@ -41,6 +41,24 @@ const Users = {
              WHERE users.id = $1`, [intId]);
         return result.rows[0];
     },
+    getByEmail: async (email) => {
+        const result = await db.query(
+            `SELECT users.id,
+                users.name,
+                users.email,
+                users.career_id,
+                careers.career_name,
+                careers.department_id,
+                departments.department_name
+         FROM users
+                  INNER JOIN
+              careers ON users.career_id = careers.id
+                  INNER JOIN
+              departments ON careers.department_id = departments.id
+         WHERE users.email = $1`, [email]
+        );
+        return result.rows[0];
+    },
     verifyUser: async (user) => {
         try {
             const result = await db.query(
