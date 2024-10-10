@@ -26,22 +26,13 @@ export const apiKeyMiddleware = (req, res, next) => {
 };
 
 const decryptData = (encryptedData) => {
-    // Decodificar los datos base64
     const dataBuffer = Buffer.from(encryptedData, 'base64');
-
-    // Extraer el IV (los primeros 16 bytes)
     const iv = dataBuffer.slice(0, 16);
-
-    // Extraer los datos cifrados (lo que queda)
     const encryptedText = dataBuffer.slice(16);
-
-    // Asegurarse de que la clave tiene 32 bytes
     const derivedKey = crypto.createHash('sha256').update(process.env.API_ENCRYPTION_KEY).digest().slice(0, 32);
 
-    // Descifrar los datos
     const decipher = crypto.createDecipheriv('aes-256-cbc', derivedKey, iv);
     let decrypted = decipher.update(encryptedText, null, 'utf8');
     decrypted += decipher.final('utf8');
-
     return decrypted;
 };
