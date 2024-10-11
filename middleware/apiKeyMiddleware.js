@@ -8,8 +8,6 @@ let previousXKey = null;
 
 export const apiKeyMiddleware = (req, res, next) => {
     let xKey = req.headers['x-api-key'];
-    console.log('xKey:', xKey);
-    console.log('previousXKey:', previousXKey);
 
     if (!xKey) {
         return res.status(403).send('No API key provided');
