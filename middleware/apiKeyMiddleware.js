@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const apiKeyMiddleware = (req, res, next) => {
-    const xKey = req.headers['x-api-key'];
+    let xKey = req.headers['x-api-key'];
 
     if (!xKey) {
         return res.status(403).send('No API key provided');
@@ -18,6 +18,7 @@ export const apiKeyMiddleware = (req, res, next) => {
             return res.status(403).send('Invalid API KEY');
         }
 
+        xKey = null;
         next();
 
     } catch (error) {
