@@ -14,7 +14,7 @@ export const apiKeyMiddleware = (req, res, next) => {
     }
 
     if (xKey === previousXKey) {
-        return res.status(403).send('API key reuse detected');
+        return res.status(403).send('API key not valid'); //<- Api key previamente usada
     }
 
     try {
@@ -24,8 +24,8 @@ export const apiKeyMiddleware = (req, res, next) => {
             return res.status(403).send('Invalid API KEY');
         }
 
-        previousXKey = xKey;
-        xKey = null;
+        previousXKey = xKey; // <- Guardar la clave para que no se pueda usar de nuevo
+        xKey = null; // <- Anular la clave para que no se pueda usar de nuevo
         next();
 
     } catch (error) {
