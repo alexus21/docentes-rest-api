@@ -4,20 +4,29 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+let previousXKey = null;
+
 export const apiKeyMiddleware = (req, res, next) => {
     let xKey = req.headers['x-api-key'];
+    console.log('xKey:', xKey);
+    console.log('previousXKey:', previousXKey);
 
     if (!xKey) {
         return res.status(403).send('No API key provided');
     }
 
+    if (xKey === previousXKey) {
+        return res.status(403).send('API key reuse detected');
+    }
+
     try {
         const decrypted = decryptData(xKey);
 
-        if (decrypted !== process.env.PASSPHRASE){
+        if (decrypted !== process.env.PASSPHRASE) {
             return res.status(403).send('Invalid API KEY');
         }
 
+        previousXKey = xKey;
         xKey = null;
         next();
 
