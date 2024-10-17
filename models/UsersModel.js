@@ -1,6 +1,6 @@
 import db from "../config/db.js";
 import fs from "fs";
-import {hashPassword} from "../moduls/password-cryptor.js";
+import {hashPassword} from "../utils/password-cryptor.js";
 
 const Users = {
     getAll: async () => {
@@ -56,6 +56,12 @@ const Users = {
                   INNER JOIN
               departments ON careers.department_id = departments.id
          WHERE users.email = $1`, [email]
+        );
+        return result.rows[0];
+    },
+    doesEmailExists: async (email) => {
+        const result = await db.query(
+            `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`, [email]
         );
         return result.rows[0];
     },

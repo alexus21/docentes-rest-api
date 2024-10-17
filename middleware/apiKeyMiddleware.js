@@ -10,18 +10,27 @@ export const apiKeyMiddleware = (req, res, next) => {
     let xKey = req.headers['x-api-key'];
 
     if (!xKey) {
-        return res.status(403).send('No API key provided');
+        return res.status(403).json({
+            message: 'No API key provided',
+            success: false
+        });
     }
 
     if (xKey === previousXKey) {
-        return res.status(403).send('API key not valid'); //<- Api key previamente usada
+        return res.status(403).json({
+            message: 'API key not valid',
+            success: false
+        }); //<- Api key previamente usada
     }
 
     try {
         const decrypted = decryptData(xKey);
 
         if (decrypted !== process.env.PASSPHRASE) {
-            return res.status(403).send('Invalid API KEY');
+            return res.status(403).json({
+                message: 'API key not valid',
+                success: false
+            });
         }
 
         previousXKey = xKey; // <- Guardar la clave para que no se pueda usar de nuevo
