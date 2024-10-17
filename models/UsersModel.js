@@ -46,6 +46,7 @@ const Users = {
             `SELECT users.id,
                 users.name,
                 users.email,
+                users.password,
                 users.career_id,
                 careers.career_name,
                 careers.department_id,

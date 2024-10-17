@@ -1,7 +1,6 @@
 import Users from "../models/UsersModel.js";
 import bcrypt from "bcryptjs";
-import fs from "fs";
-import {hashPassword} from "../utils/password-cryptor.js";
+import {checkPassword} from "../utils/password-verify.js";
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -45,7 +44,7 @@ export const getUserById = async (req, res) => {
 
 export const getUserByMail = async (req, res) => {
     try {
-        const email = req.query.email; // Asegurarse de que es email lo que se consulta
+        const email = req.query.email;
         const user = await Users.getByEmail(email);
 
         if (!user) {
@@ -55,13 +54,9 @@ export const getUserByMail = async (req, res) => {
             });
         }
 
-        const users = fs.readFileSync('./users.json', 'utf-8');
-        const parsedUsers = JSON.parse(users).users;
-        const userPassword = parsedUsers.find(user => user.email === email).password;
-
         res.json({
-            email: email,
-            password: userPassword,
+            email: user.email,
+            password: user.password,
             success: true,
         });
     } catch (err) {
@@ -72,7 +67,7 @@ export const getUserByMail = async (req, res) => {
 
 export const verifyEmail = async (req, res) => {
     try {
-        const email = req.query.email; // Asegurarse de que es email lo que se consulta
+        const email = req.query.email;
         const user = await Users.doesEmailExists(email);
 
         if (!user.exists) {
@@ -125,7 +120,7 @@ export const verifyUser = async (req, res) => {
             });
         }
 
-        const isPasswordValid = bcrypt.compareSync(req.query.password, user.password);
+        const isPasswordValid = checkPassword(req.query.password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({
                 message: "Contraseña incorrecta",
