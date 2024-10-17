@@ -61,7 +61,7 @@ export const getUserByMail = async (req, res) => {
 
         res.json({
             email: email,
-            password: hashPassword(userPassword),
+            password: userPassword,
             success: true,
         });
     } catch (err) {
